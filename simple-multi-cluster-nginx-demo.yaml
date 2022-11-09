@@ -1,11 +1,11 @@
 apiVersion: core.oam.dev/v1beta1
 kind: Application
 metadata:
-  name: basic-topology
+  name: simeple-mc-deploy-demo
   namespace: examples
 spec:
   components:
-    - name: nginx-basic
+    - name: nginx-mc-demo
       type: webservice
       properties:
         image: nginx
@@ -14,7 +14,7 @@ spec:
           properties:
             port: [80]
   policies:
-    - name: topology-hangzhou-clusters
+    - name: topology-multi-clusters
       type: topology
       properties:
         clusters: ["cluster2", "oke-sg"]
