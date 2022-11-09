@@ -1,0 +1,46 @@
+apiVersion: core.oam.dev/v1beta1
+kind: Application
+metadata:
+  name: deploy-demo-override
+  namespace: default
+spec:
+  components:
+    - name: nginx-demo-override
+      type: webservice
+      properties:
+        image: nginx
+  policies:
+    - name: topology-oke-clusters
+      type: topology
+      properties:
+        clusters: ["oke-sg", "oke-sjc"]
+    - name: topology-cluster2
+      type: topology
+      properties:
+        clusters: ["cluster2"]
+    - name: override-nginx-legacy-image
+      type: override
+      properties:
+        components:
+          - name: nginx-demo-override
+            properties:
+              image: nginx:1.20
+    - name: override-high-availability
+      type: override
+      properties:
+        components:
+          - type: webservice
+            traits:
+              - type: scaler
+                properties:
+                  replicas: 2
+  workflow:
+    steps:
+      - type: deploy
+        name: deploy-cluster2
+        properties:
+          policies: ["topology-cluster2"]
+      - type: deploy
+        name: deploy-oke-clusters
+        properties:
+          policies: ["topology-oke-clusters", "override-nginx-legacy-image", "override-high-availability"]
